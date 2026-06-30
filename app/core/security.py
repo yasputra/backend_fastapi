@@ -1,14 +1,19 @@
 from fastapi import Header, HTTPException
 from firebase_admin import auth
 
+# DEVELOPMENT MODE
+DEV_MODE = True
+
 
 def verify_token(authorization: str = Header(None)):
-    """
-    Memverifikasi Firebase ID Token dari Authorization Header
-    Format:
-    Authorization: Bearer <firebase_id_token>
-    """
 
+    # DEVELOPMENT MODE   
+    if DEV_MODE:
+        return {
+            "uid": "dev-admin"
+        }
+
+    # PRODUCTION MODE
     if authorization is None:
         raise HTTPException(
             status_code=401,
@@ -25,7 +30,6 @@ def verify_token(authorization: str = Header(None)):
 
     try:
         decoded_token = auth.verify_id_token(id_token)
-
         return decoded_token
 
     except Exception:

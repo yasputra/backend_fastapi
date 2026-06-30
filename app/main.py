@@ -1,4 +1,6 @@
+# run backend : python -m uvicorn app.main:app --reload
 from fastapi import FastAPI
+from app.routers.medical_record_router import router as medical_record_router
 
 from app.routers.patient_router import router as patient_router
 from app.routers.auth_router import router as auth_router
@@ -11,6 +13,7 @@ app = FastAPI(
 # Register Router
 app.include_router(auth_router)
 app.include_router(patient_router)
+app.include_router(medical_record_router)
 
 
 @app.get("/")

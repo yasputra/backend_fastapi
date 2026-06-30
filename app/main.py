@@ -5,6 +5,9 @@ from app.services.patient_service import create_patient
 from app.services.patient_service import get_all_patients
 from app.services.patient_service import get_patient_by_id
 from fastapi import HTTPException
+from app.services.patient_service import update_patient
+from app.services.patient_service import delete_patient
+from app.schemas.patient import Patient
 
 app = FastAPI()
 
@@ -15,6 +18,7 @@ def root():
     }
 
 # crud pasien dulu 
+# baca
 @app.get("/patients")
 def get_patients():
 
@@ -37,6 +41,7 @@ def get_patient_by_id(patient_id: str):
 
     return patient
 
+# tambah
 @app.post("/patients")
 def add_patient(patient: Patient):
 
@@ -46,6 +51,17 @@ def add_patient(patient: Patient):
 def get_patient(patient_id: str):
 
     return get_patient_by_id(patient_id)
+
+# edit
+@app.put("/patients/{patient_id}")
+def edit_patient(patient_id: str, patient: Patient):
+
+    return update_patient(patient_id, patient.model_dump())
+
+# hapus
+@app.delete("/patients/{patient_id}")
+def remove_patient(patient_id: str):
+    return delete_patient(patient_id)
 
 #firebase integrasi
 @app.get("/test-firebase")

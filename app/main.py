@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from app.schemas.patient import Patient
+from app.core.firebase import db
+from app.services.patient_service import create_patient
 
 app = FastAPI()
 
@@ -33,6 +35,13 @@ def get_patient(patient_id: int):
     }
 
 @app.post("/patients")
-def tambah_pasien(patient: Patient):
+def add_patient(patient: Patient):
 
-    return patient
+    return create_patient(patient.model_dump())
+
+#firebase integrasi
+@app.get("/test-firebase")
+def test_firebase():
+    return {
+        "message": "Firebase Connected!"
+    }

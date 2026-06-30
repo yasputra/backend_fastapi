@@ -5,6 +5,8 @@ from app.routers.medical_record_router import router as medical_record_router
 from app.routers.patient_router import router as patient_router
 from app.routers.auth_router import router as auth_router
 
+from app.routers.ai_router import router as ai_router
+
 app = FastAPI(
     title="Backend Rekam Medis",
     version="1.0.0"
@@ -14,6 +16,7 @@ app = FastAPI(
 app.include_router(auth_router)
 app.include_router(patient_router)
 app.include_router(medical_record_router)
+app.include_router(ai_router)
 
 
 @app.get("/")

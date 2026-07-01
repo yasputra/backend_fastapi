@@ -10,3 +10,6 @@ class SOAPResponse(BaseModel):
     objective: str
     assessment: str
     plan: str
+
+class TranscriptResponse(BaseModel):
+    transcript: str

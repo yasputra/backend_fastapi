@@ -1,5 +1,6 @@
 from app.core.firebase import db
 from fastapi import HTTPException
+from datetime import datetime
 
 
 # Menampilkan seluruh rekam medis
@@ -23,9 +24,26 @@ def get_all_medical_records():
 # Menambahkan rekam medis
 def create_medical_record(data: dict):
 
-    db.collection("medical_records").add(data)
+    # Validasi pasien
+    patient = db.collection("patients").document(data["patient_id"]).get()
+
+    if not patient.exists:
+        raise HTTPException(
+            status_code=404,
+            detail="Pasien tidak ditemukan"
+        )
+
+    now = datetime.utcnow().isoformat()
+
+    data["created_at"] = now
+    data["updated_at"] = now
+
+    doc_ref = db.collection("medical_records").document()
+
+    doc_ref.set(data)
 
     return {
+        "id": doc_ref.id,
         "message": "Rekam medis berhasil ditambahkan"
     }
 
@@ -60,6 +78,7 @@ def update_medical_record(record_id: str, data: dict):
             detail="Rekam medis tidak ditemukan"
         )
 
+    data["updated_at"] = datetime.utcnow().isoformat()
     doc_ref.update(data)
 
     updated_doc = doc_ref.get().to_dict()
@@ -93,9 +112,15 @@ def get_medical_records_by_patient(patient_id: str):
 
     medical_records = []
 
+    from firebase_admin import firestore
+
     docs = (
         db.collection("medical_records")
         .where("patient_id", "==", patient_id)
+        .order_by(
+            "created_at",
+            direction=firestore.Query.DESCENDING
+        )
         .stream()
     )
 
